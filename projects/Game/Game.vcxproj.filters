@@ -134,9 +134,6 @@
     <CopyFileToFolders Include="..\resource\VertexTest.hlsl">
       <Filter>リソース ファイル</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resource\PixelTest1.hlsl">
-      <Filter>リソース ファイル</Filter>
-    </CopyFileToFolders>
     <CopyFileToFolders Include="..\resource\PixelTest2.hlsl">
       <Filter>リソース ファイル</Filter>
     </CopyFileToFolders>
@@ -161,5 +158,10 @@
     <Image Include="small.ico">
       <Filter>リソース ファイル</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\resource\PixelTest1.hlsl">
+      <Filter>リソース ファイル</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

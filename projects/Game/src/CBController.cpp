@@ -3,6 +3,7 @@
 #include <UniDx/D3DManager.h>
 #include <UniDx/Input.h>
 
+#include "Player.h"
 
 using namespace UniDx;
 
@@ -12,6 +13,8 @@ namespace
     struct CBParam // register(b0)
     {
         Color baseColor;
+        Vector3 playerPos;
+        float padding;
     };
     constexpr int CBSlot = 0;
 
@@ -51,6 +54,8 @@ void CBController::Update()
 
 
     CBParam cb;
+
+    cb.playerPos = player->transform->position;
 
     // カラーテーブルから現在のインデクスの色を設定
     cb.baseColor = colorTable[colorIndex];

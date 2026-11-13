@@ -33,9 +33,9 @@ namespace
     unique_ptr<GameObject> CreateSphere(Vector3 pos)
     {
         auto sphere = make_unique<GameObject>(u8"Sphere",
-            SphereRenderer::create<VertexPN>(u8"resource/VertexTest.hlsl"),
-//              SphereRenderer::create<VertexPN>(u8"resource/PixelTest1.hlsl"),
-//            SphereRenderer::create<VertexPNT>(u8"resource/PixelTest2.hlsl", u8"resource/wood-2.png"),
+            //SphereRenderer::create<VertexPN>(u8"resource/VertexTest.hlsl"),
+            SphereRenderer::create<VertexPN>(u8"resource/PixelTest1.hlsl"),
+            //SphereRenderer::create<VertexPNT>(u8"resource/PixelTest2.hlsl", u8"resource/wood-2.png"),
             make_unique<SphereCollider>(Vector3::zero, 1.0f),
             make_unique<Rigidbody>()
         );
@@ -78,29 +78,51 @@ void MainGame::createMap()
     auto map = make_unique<GameObject>();
 
     // 床
-    for(int i = 0; i < mapHeight; i++)
-    {
-        for(int j = 0; j < mapWidth; j++)
-        {
-            auto rb = make_unique<Rigidbody>();
-            rb->gravityScale = 0;
-            rb->mass = numeric_limits<float>::infinity();
-            auto floor = make_unique<GameObject>(u8"床",
-                CubeRenderer::create<VertexPN>(u8"resource/VertexTest.hlsl"),
-//                CubeRenderer::create<VertexPN>(u8"resource/PixelTest1.hlsl"),
-//                CubeRenderer::create<VertexPNT>(floorMat),
-                move(rb),
-                make_unique<AABBCollider>());
-            floor->transform->localScale = Vector3(2, 2, 2);
-            floor->transform->localPosition = Vector3(
-                i * 2 - float(mapWidth / 2) * 2,
-                -1.0f,
-                j * -2 + float(mapHeight / 2) * 2);
+    constexpr int divisions = 4;
+    constexpr float floorScale = 0.5f;
+    constexpr float spacing = 0.5f;
 
-            // 親をマップにする
+    for (int i = 0; i < mapHeight * divisions; i++)
+    {
+        for (int j = 0; j < mapWidth * divisions; j++)
+        {
+            auto floor = make_unique<GameObject>(u8"床",
+                CubeRenderer::create<VertexPN>(u8"resource/VertexTest.hlsl"));
+
+            floor->transform->localScale =
+                Vector3(floorScale, 2.0f, floorScale);
+
+            floor->transform->localPosition = Vector3(
+                (i - mapWidth * divisions / 2) * spacing + spacing / 2,
+                -1.0f,
+                -(j - mapHeight * divisions / 2) * spacing - spacing / 2
+            );
+
             Transform::SetParent(move(floor), map->transform);
         }
     }
+
+    // 床全体のCollider
+    auto floorCollider = make_unique<GameObject>(u8"床コライダー");
+
+    floorCollider->AddComponent<AABBCollider>();
+
+    floorCollider->transform->localScale = Vector3(
+        mapWidth * divisions * spacing,
+        2.0f,
+        mapHeight * divisions * spacing
+    );
+
+    floorCollider->transform->localPosition = Vector3(
+        0.0f,
+        -1.0f,
+        0.0f
+    );
+
+    Transform::SetParent(move(floorCollider), map->transform);
+
+
+
 
     // 壁
     for(int i = 0; i < 4; i++)
@@ -137,10 +159,7 @@ void MainGame::createMap()
 
 unique_ptr<UniDx::Scene> MainGame::CreateScene()
 {
-    // -- CBController --
-    auto cbControllerObj = make_unique<GameObject>(u8"CBController",
-        make_unique<CBController>()
-    );
+    auto cbBehaviour = make_unique<CBController>();
 
     // -- プレイヤー --
     auto playerObj = make_unique<GameObject>(u8"プレイヤー",
@@ -149,6 +168,14 @@ unique_ptr<UniDx::Scene> MainGame::CreateScene()
         make_unique<SphereCollider>(Vector3(0, 0.5f, 0)),
         make_unique<Player>()
         );
+
+    cbBehaviour->player = playerObj->GetComponent<Player>();
+
+    // -- CBController --
+    auto cbControllerObj = make_unique<GameObject>(u8"CBController",
+        move(cbBehaviour)
+    );
+
     auto model = playerObj->GetComponent<GltfModel>();
     model->Load<VertexPNT>(
         u8"resource/ModularCharacterPBR.glb",

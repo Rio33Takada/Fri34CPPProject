@@ -7,6 +7,7 @@
 cbuffer CBParam : register(b0)
 {
     float4 baseColor;
+    float3 playerPos;
 };
 
 // ----------------------------------------------------------
@@ -49,27 +50,28 @@ struct PSInput
 PSInput VS(VSInput vin)
 {
     PSInput Out;
-    float4 p = float4(vin.pos.xyz, 1);
-    
-    float4 local = p;
 
-    p = mul(p, world);
+    float4 p = float4(vin.pos, 1.0f);
 
-    float4 worldPos = p;
+    float4 worldPos = mul(p, world);
 
-    float l = length(worldPos.xz);
-    worldPos.y += sin(l * -0.5 + time.x);
+    float dist = distance(worldPos.xyz, playerPos);
+
+    float y = min(1.0f, dist);
+
+    worldPos.y += y;
 
     p = mul(worldPos, view);
     p = mul(p, projection);
 
     Out.pos = p;
-    
-    float c = worldPos.y * 0.2 + 0.5;
-    Out.color = baseColor * float4(c, c, c, 1);
+    float c = saturate(worldPos.y * 0.2f + 0.5f);
+    Out.color = baseColor * float4(c, c, c, 1.0f);
+
 
     return Out;
 }
+
 
  
 // ----------------------------------------------------------
