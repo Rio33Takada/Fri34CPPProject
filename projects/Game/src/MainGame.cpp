@@ -34,8 +34,8 @@ namespace
     {
         auto sphere = make_unique<GameObject>(u8"Sphere",
             //SphereRenderer::create<VertexPN>(u8"resource/VertexTest.hlsl"),
-            SphereRenderer::create<VertexPN>(u8"resource/PixelTest1.hlsl"),
-            //SphereRenderer::create<VertexPNT>(u8"resource/PixelTest2.hlsl", u8"resource/wood-2.png"),
+            //SphereRenderer::create<VertexPN>(u8"resource/PixelTest1.hlsl"),
+            SphereRenderer::create<VertexPNT>(u8"resource/PixelTest2.hlsl", u8"resource/wood-2.png"),
             make_unique<SphereCollider>(Vector3::zero, 1.0f),
             make_unique<Rigidbody>()
         );
@@ -87,7 +87,9 @@ void MainGame::createMap()
         for (int j = 0; j < mapWidth * divisions; j++)
         {
             auto floor = make_unique<GameObject>(u8"床",
-                CubeRenderer::create<VertexPN>(u8"resource/VertexTest.hlsl"));
+                CubeRenderer::create<VertexPN>(u8"resource/VertexTest.hlsl")
+                //CubeRenderer::create<VertexPN>(u8"resource/PixelTest2.hlsl")
+            );
 
             floor->transform->localScale =
                 Vector3(floorScale, 2.0f, floorScale);
