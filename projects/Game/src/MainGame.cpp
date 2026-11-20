@@ -82,27 +82,27 @@ void MainGame::createMap()
     constexpr float floorScale = 0.5f;
     constexpr float spacing = 0.5f;
 
-    for (int i = 0; i < mapHeight * divisions; i++)
-    {
-        for (int j = 0; j < mapWidth * divisions; j++)
-        {
-            auto floor = make_unique<GameObject>(u8"床",
-                CubeRenderer::create<VertexPN>(u8"resource/VertexTest.hlsl")
-                //CubeRenderer::create<VertexPN>(u8"resource/PixelTest2.hlsl")
-            );
+    //for (int i = 0; i < mapHeight * divisions; i++)
+    //{
+    //    for (int j = 0; j < mapWidth * divisions; j++)
+    //    {
+    //        auto floor = make_unique<GameObject>(u8"床",
+    //            CubeRenderer::create<VertexPN>(u8"resource/VertexTest.hlsl")
+    //            //CubeRenderer::create<VertexPN>(u8"resource/PixelTest2.hlsl")
+    //        );
 
-            floor->transform->localScale =
-                Vector3(floorScale, 2.0f, floorScale);
+    //        floor->transform->localScale =
+    //            Vector3(floorScale, 2.0f, floorScale);
 
-            floor->transform->localPosition = Vector3(
-                (i - mapWidth * divisions / 2) * spacing + spacing / 2,
-                -1.0f,
-                -(j - mapHeight * divisions / 2) * spacing - spacing / 2
-            );
+    //        floor->transform->localPosition = Vector3(
+    //            (i - mapWidth * divisions / 2) * spacing + spacing / 2,
+    //            -1.0f,
+    //            -(j - mapHeight * divisions / 2) * spacing - spacing / 2
+    //        );
 
-            Transform::SetParent(move(floor), map->transform);
-        }
-    }
+    //        Transform::SetParent(move(floor), map->transform);
+    //    }
+    //}
 
     // 床全体のCollider
     auto floorCollider = make_unique<GameObject>(u8"床コライダー");

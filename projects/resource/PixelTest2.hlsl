@@ -140,8 +140,22 @@ half4 PS(PSInput In) : SV_Target0
     }
 
     // カラー合成
+    diffAccum = smoothstep(0.4, 0.6, diffAccum) * 0.7 + 0.5;
     half4 color = half4(diffAccum, 1) * albedo * (half4)baseColor;
     color += half4(spec, 1) * half4(baseColor);
+
+    half shadow = 1.0 - smoothstep(0.4, 0.6, diffAccum);
+
+    float lineScale = 40.0;
+    float lineWidth = 0.15;
+
+    float pattern = frac((In.uv.x + In.uv.y) * lineScale);
+
+    half hatch = step(1.0 - lineWidth, pattern);
+
+    half hatchMask = hatch * smoothstep(0.3, 0.7, shadow);
+
+    color.rgb = lerp(color.rgb, color.rgb * 0.3, hatchMask);
 
     // 最終カラーを出力
     return color;
